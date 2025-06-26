@@ -1,11 +1,28 @@
-﻿using System.Net.Http.Headers;
+﻿using RestSharp;
+using Newtonsoft.Json;
 
 
 namespace DrinksInfo
 {
     internal class CocktailApiClient
     {
-        static readonly HttpClient client = new();
+        public static CocktailApiClient Instance { get; } = new();
+        private readonly RestClientOptions _options;
+        private readonly RestClient _client;
+
+        private CocktailApiClient()
+        {
+            _options = new RestClientOptions("https://www.thecocktaildb.com/api/json/v1/1/");
+            _client = new RestClient(_options); 
+        }
+
+        public async Task GetCategoryList()
+        {
+            var request = new RestRequest("list.php?c=list");
+            var response = await _client.GetAsync(request);
+        }
+        
+        /*static readonly HttpClient client = new();
        
         static async void BuildAPIRequest(string url)
         {
@@ -20,6 +37,6 @@ namespace DrinksInfo
         {
             var json = await client.GetStringAsync(url);
 
-        }
+        }*/
     }
 }
