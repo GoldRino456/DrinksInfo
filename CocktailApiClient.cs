@@ -16,27 +16,36 @@ namespace DrinksInfo
             _client = new RestClient(_options); 
         }
 
-        public async Task GetCategoryList()
+        public async Task<List<Category>?> GetCategoryList()
         {
             var request = new RestRequest("list.php?c=list");
-            var response = await _client.GetAsync(request);
-        }
-        
-        /*static readonly HttpClient client = new();
-       
-        static async void BuildAPIRequest(string url)
-        {
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
-
-            await ProcessRequestAsync(client, url);
+            var response = await _client.ExecuteAsync(request);
+            return ProcessResponse<Categories>(response).CategoriesList;
         }
 
-        static async Task ProcessRequestAsync(HttpClient client, string url)
+        public async Task<List<Drink>?> GetDrinksByCategory(Category category)
         {
-            var json = await client.GetStringAsync(url);
+            var request = new RestRequest($"filter.php?c={category.StrCategory}");
+            var response = await _client.ExecuteAsync(request);
+            return ProcessResponse<Drinks>(response).DrinksList;
+        }
 
-        }*/
+        public async Task<List<DrinkData>?> GetDrinkDetails(Drink drink)
+        {
+            var request = new RestRequest($"lookup.php?i={drink.IdDrink}");
+            var response = await _client.ExecuteAsync(request);
+            return ProcessResponse<DrinkDataContainer>(response).DrinkDataList;
+        }
+
+        private static T? ProcessResponse<T>(RestResponse response)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                string raw = response.Content;
+                return JsonConvert.DeserializeObject<T>(raw);
+            }
+
+            return default;
+        }
     }
 }
