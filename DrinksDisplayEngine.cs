@@ -4,19 +4,27 @@ namespace DrinksInfo
 {
     internal static class DrinksDisplayEngine
     {
-        /*public static void ShowListAsTable(List list)
-        {
-
-        }*/
-
         public static void ShowTable(string[] columns, string[] rows)
         {
             var table = new Table();
 
             table.AddColumns(columns);
-            table.AddRow(rows);
+            foreach (var row in rows)
+            {
+                table.AddRow(row);
+            }
 
             AnsiConsole.Write(table);
+        }
+
+        public static string PromptUserForStringSelection(string promptText, string[] choices)
+        {
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title(promptText)
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down to see additional options)[/]")
+                .AddChoices(choices));
         }
     }
 }
