@@ -1,4 +1,5 @@
 ﻿using DrinksInfo;
+using System.Reflection;
 
 public class DrinksInfoApp
 {
@@ -8,11 +9,14 @@ public class DrinksInfoApp
         
         while(true)
         {
-            string categoryChoice = DisplayCategories(client);
+            Category? categoryChoice = DisplayCategories(client);
+            Drink? drinkChoice = DisplayDrinksInCategory(client, categoryChoice);
+            DisplayDrinkData(client, drinkChoice);
+            Console.ReadLine();
         }
     }
 
-    private static string DisplayCategories(CocktailApiClient client)
+    private static Category? DisplayCategories(CocktailApiClient client)
     {
         var categories = client.GetCategoryList().Result;
 
@@ -22,10 +26,20 @@ public class DrinksInfoApp
             choices[i] = categories[i].StrCategory;
         }
 
-        return DrinksDisplayEngine.PromptUserForStringSelection("Please select a category: ", choices);
+        var selection = DrinksDisplayEngine.PromptUserForStringSelection("Please select a category: ", choices);
+
+        foreach(var category in categories)
+        {
+            if(category.StrCategory.Equals(selection))
+            {
+                return category;
+            }
+        }
+
+        return null;
     }
 
-    private static string DisplayDrinksInCategory(CocktailApiClient client, Category categoryChoice)
+    private static Drink? DisplayDrinksInCategory(CocktailApiClient client, Category categoryChoice)
     {
         var drinks = client.GetDrinksByCategory(categoryChoice).Result;
 
@@ -35,6 +49,41 @@ public class DrinksInfoApp
             choices[i] = drinks[i].StrDrink;
         }
 
-        return DrinksDisplayEngine.PromptUserForStringSelection("Which drink would you like to view?", choices);
+        var selection = DrinksDisplayEngine.PromptUserForStringSelection("Which drink would you like to view?", choices);
+
+        foreach (var drink in drinks)
+        {
+            if(drink.StrDrink.Equals(selection))
+            {
+                return drink;
+            }
+        }
+
+        return null;
+    }
+
+    private static void DisplayDrinkData(CocktailApiClient client, Drink drink)
+    {
+        var drinkDataContainer = client.GetDrinkDataContainer(drink).Result;
+        DrinkData drinkData = drinkDataContainer[0];
+
+        List<string[]> displayList = new();
+        string formattedName = "";
+
+        foreach (PropertyInfo property in drinkData.GetType().GetProperties())
+        {
+            if(property.Name.Contains("str"))
+            {
+                formattedName = property.Name.Substring(3);
+            }
+
+            if(!string.IsNullOrEmpty(property.GetValue(drinkData)?.ToString()))
+            {
+                displayList.Add([formattedName, property.GetValue(drinkData).ToString()]);
+            }
+
+            DrinksDisplayEngine.ShowTable(["", ""], displayList);
+        }
+
     }
 }

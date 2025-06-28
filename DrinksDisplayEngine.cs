@@ -4,7 +4,7 @@ namespace DrinksInfo
 {
     internal static class DrinksDisplayEngine
     {
-        public static void ShowTable(string[] columns, string[] rows)
+        public static void ShowTable(string[] columns, List<string[]> rows)
         {
             var table = new Table();
 

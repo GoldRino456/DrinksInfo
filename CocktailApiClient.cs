@@ -30,7 +30,7 @@ namespace DrinksInfo
             return ProcessResponse<Drinks>(response).DrinksList;
         }
 
-        public async Task<List<DrinkData>?> GetDrinkDetails(Drink drink)
+        public async Task<List<DrinkData>?> GetDrinkDataContainer(Drink drink)
         {
             var request = new RestRequest($"lookup.php?i={drink.IdDrink}");
             var response = await _client.ExecuteAsync(request);
