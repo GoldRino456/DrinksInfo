@@ -1,5 +1,6 @@
 ﻿using RestSharp;
 using Newtonsoft.Json;
+using DrinksInfo.Models;
 
 
 namespace DrinksInfo

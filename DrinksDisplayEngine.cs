@@ -26,5 +26,16 @@ namespace DrinksInfo
                 .MoreChoicesText("[grey](Move up and down to see additional options)[/]")
                 .AddChoices(choices));
         }
+
+        public static void ClearScreen()
+        {
+            AnsiConsole.Clear();
+        }
+
+        public static void PressAnyKeyToContinue()
+        {
+            AnsiConsole.Write("Press Any Key To Return...");
+            AnsiConsole.Console.Input.ReadKey(false);
+        }
     }
 }

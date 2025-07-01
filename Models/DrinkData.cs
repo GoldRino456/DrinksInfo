@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DrinksInfo
+namespace DrinksInfo.Models
 {
     public class DrinkData
     {
